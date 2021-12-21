@@ -1,6 +1,7 @@
 <?php
 
 use Model\Boosterpack_model;
+use Model\Login_model;
 use Model\Post_model;
 use Model\User_model;
 
@@ -12,42 +13,73 @@ use Model\User_model;
  */
 class Main_page extends MY_Controller
 {
-
+    /**
+     * Class constructor
+     *
+     * @return void
+     */
     public function __construct()
     {
-
         parent::__construct();
 
-        if (is_prod())
-        {
+        if (is_prod()) {
             die('In production it will be hard to debug! Run as development environment!');
         }
     }
 
+    /**
+     * Main page
+     *
+     * @return void
+     * @throws Exception
+     */
     public function index()
     {
         $user = User_model::get_user();
-
         App::get_ci()->load->view('main_page', ['user' => User_model::preparation($user, 'default')]);
     }
 
+    /**
+     * Get all posts
+     *
+     * @return object|string|void
+     * @throws Exception
+     */
     public function get_all_posts()
     {
-        $posts =  Post_model::preparation_many(Post_model::get_all(), 'default');
+        $posts = Post_model::preparation_many(Post_model::get_all(), 'default');
         return $this->response_success(['posts' => $posts]);
     }
 
+    /**
+     * Get booster packs
+     *
+     * @return object|string|void
+     */
     public function get_boosterpacks()
     {
-        $posts =  Boosterpack_model::preparation_many(Boosterpack_model::get_all(), 'default');
+        $posts = Boosterpack_model::preparation_many(Boosterpack_model::get_all(), 'default');
         return $this->response_success(['boosterpacks' => $posts]);
     }
 
+    /**
+     * Endpoint login user
+     *
+     * @throws Exception
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
     public function login()
     {
-        // TODO: task 1, аутентификация
+        try {
+            $model = Login_model::login($this->input->post());
+        } catch (Exception $e) {
+            return $this->response_error($e->getMessage());
+        }
 
-        return $this->response_success();
+        return $this->response_success([
+            'user' => $model
+        ]);
     }
 
     public function logout()
@@ -78,23 +110,20 @@ class Main_page extends MY_Controller
 
     }
 
-    public function get_post(int $post_id) {
+    public function get_post(int $post_id)
+    {
         // TODO получения поста по id
     }
 
     public function buy_boosterpack()
     {
         // Check user is authorize
-        if ( ! User_model::is_logged())
-        {
+        if (!User_model::is_logged()) {
             return $this->response_error(System\Libraries\Core::RESPONSE_GENERIC_NEED_AUTH);
         }
 
         // TODO: task 5, покупка и открытие бустерпака
     }
-
-
-
 
 
     /**
@@ -103,8 +132,7 @@ class Main_page extends MY_Controller
     public function get_boosterpack_info(int $bootserpack_info)
     {
         // Check user is authorize
-        if ( ! User_model::is_logged())
-        {
+        if (!User_model::is_logged()) {
             return $this->response_error(System\Libraries\Core::RESPONSE_GENERIC_NEED_AUTH);
         }
 

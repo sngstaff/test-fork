@@ -340,13 +340,42 @@ class User_model extends Emerald_model {
     }
 
     /**
-     * @param string $email
+     * Find user by email
      *
+     * @param string $email
      * @return User_model
+     * @throws Exception
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
      */
     public static function find_user_by_email(string $email): User_model
     {
-        // TODO: task 1, аутентификация
+        $user = App::get_s()
+            ->from(self::CLASS_TABLE)
+            ->where([
+             'email' => $email
+            ])
+            ->one();
+
+        if (empty($user))
+        {
+            throw new Exception('User not found');
+        }
+
+        return self::$_current_user = self::transform_one($user);
+    }
+
+    /**
+     * validate user password
+     *
+     * @param string $password
+     * @return bool
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
+    public static function validate_password(string $password): bool
+    {
+        return (self::$_current_user->password === $password);
     }
 
     /**
