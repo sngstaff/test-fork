@@ -89,6 +89,10 @@ class Main_page extends MY_Controller
 
     public function comment()
     {
+        $data = App::get_ci()->input->post();
+        $data['user_id'] = User_model::get_user()->get_id();
+
+        \Model\Comment_model::create($data);
         // TODO: task 2, комментирование
     }
 

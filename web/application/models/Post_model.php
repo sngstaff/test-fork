@@ -212,12 +212,13 @@ class Post_model extends Emerald_Model
      * Get post by id
      *
      * @param int $post_id
+     * @return Post_model
      *
      * @author Farukh Baratov <seniorsngstaff@mail.ru>
      */
-    public static function get_by_id(int $post_id)
+    public static function get_by_id(int $post_id): Post_model
     {
-        return self::transform_one(
+        return static::transform_one(
             App::get_s()
                 ->from(self::CLASS_TABLE)
                 ->where(['id' => $post_id])

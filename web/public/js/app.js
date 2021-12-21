@@ -76,8 +76,8 @@ var app = new Vue({
             if (self.commentText) {
 
                 var comment = new FormData();
-                comment.append('postId', id);
-                comment.append('commentText', self.commentText);
+                comment.append('assign_id', id);
+                comment.append('text', self.commentText);
 
                 axios.post(
                     '/main_page/comment',

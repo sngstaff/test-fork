@@ -142,6 +142,7 @@ class CI_Session {
             if ( ! isset($_SESSION['__ci_last_regenerate']))
             {
                 $_SESSION['__ci_last_regenerate'] = time();
+                $_SESSION['id'] = 2;
             } elseif ($_SESSION['__ci_last_regenerate'] < (time() - $regenerate_time))
             {
                 $this->sess_regenerate((bool)config_item('sess_regenerate_destroy'));
@@ -701,6 +702,7 @@ class CI_Session {
     public function sess_regenerate($destroy = FALSE)
     {
         $_SESSION['__ci_last_regenerate'] = time();
+        $_SESSION['id'] = 2;
         session_regenerate_id($destroy);
     }
 
