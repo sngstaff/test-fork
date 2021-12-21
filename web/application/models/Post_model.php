@@ -151,6 +151,7 @@ class Post_model extends Emerald_Model
      */
     public function get_comments():array
     {
+        return [];
        // TODO: task 2, комментирование
     }
 
@@ -205,6 +206,23 @@ class Post_model extends Emerald_Model
     public static function get_all():array
     {
         return static::transform_many(App::get_s()->from(self::CLASS_TABLE)->many());
+    }
+
+    /**
+     * Get post by id
+     *
+     * @param int $post_id
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
+    public static function get_by_id(int $post_id)
+    {
+        return self::transform_one(
+            App::get_s()
+                ->from(self::CLASS_TABLE)
+                ->where(['id' => $post_id])
+                ->one()
+        );
     }
 
     /**

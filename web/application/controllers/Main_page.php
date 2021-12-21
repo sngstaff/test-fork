@@ -110,9 +110,18 @@ class Main_page extends MY_Controller
 
     }
 
+    /**
+     * Get one post
+     *
+     * @param int $post_id
+     * @return object|string|void
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
     public function get_post(int $post_id)
     {
-        // TODO получения поста по id
+        $post = Post_model::preparation(Post_model::get_by_id($post_id), 'full_info');
+        return $this->response_success(['post' => $post]);
     }
 
     public function buy_boosterpack()
