@@ -84,9 +84,12 @@ class Main_page extends MY_Controller
         ]);
     }
 
+    /**
+     * Logout user
+     */
     public function logout()
     {
-        // TODO: task 1, аутентификация
+        Login_model::logout();
     }
 
     /**
