@@ -587,6 +587,8 @@ class Sparrow {
             $this->quote($value1),
             $this->quote($value2)
         ));
+
+        return $this;
     }
 
     /**
