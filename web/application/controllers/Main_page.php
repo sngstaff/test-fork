@@ -5,6 +5,7 @@ use Model\Comment_model;
 use Model\Login_model;
 use Model\Post_model;
 use Model\User_model;
+use Repository\Like_repository;
 
 /**
  * Created by PhpStorm.
@@ -112,14 +113,50 @@ class Main_page extends MY_Controller
         ]);
     }
 
+    /**
+     * Like comment
+     *
+     * @param int $comment_id
+     * @return object|string|void
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
     public function like_comment(int $comment_id)
     {
-        // TODO: task 3, лайк комментария
+        $repository = new Like_repository(new Comment_model($comment_id));
+
+        try {
+            $repository->like();
+        } catch (Exception $e) {
+            return $this->response_error($e->getMessage());
+        }
+
+        return $this->response_success([
+            'likes' => $repository->get_likes_count()
+        ]);
     }
 
+    /**
+     * Like post
+     *
+     * @param int $post_id
+     * @return object|string|void
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
     public function like_post(int $post_id)
     {
-        // TODO: task 3, лайк поста
+        $repository = new Like_repository(new Post_model($post_id));
+
+        try {
+            $repository->like();
+        } catch (Exception $e) {
+            return $this->response_error($e->getMessage());
+        }
+
+        return $this->response_success([
+            'likes' => $repository->get_likes_count()
+        ]);
     }
 
     public function add_money()
@@ -140,7 +177,7 @@ class Main_page extends MY_Controller
      */
     public function get_post(int $post_id)
     {
-        $post = Post_model::preparation(Post_model::get_by_id($post_id), 'full_info');
+        $post = Post_model::preparation(new Post_model($post_id), 'full_info');
         return $this->response_success(['post' => $post]);
     }
 

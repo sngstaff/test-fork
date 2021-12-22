@@ -145,6 +145,18 @@ class User_model extends Emerald_model {
         return $this->likes_balance;
     }
 
+    /**
+     * Check if user can pay (likes balance)
+     *
+     * @return bool
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
+    public function can_pay(): bool
+    {
+        return ($this->get_likes_balance() > 0);
+    }
+
     public function set_likes_balance($likes_balance):bool
     {
         $this->likes_balance = $likes_balance;

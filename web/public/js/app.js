@@ -123,6 +123,9 @@ var app = new Vue({
             axios
                 .get(url)
                 .then(function (response) {
+                    if (response.data.status == 'error') {
+                        return alert(response.data.error_message);
+                    }
                     self.likes = response.data.likes;
                 })
 

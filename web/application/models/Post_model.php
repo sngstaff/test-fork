@@ -2,6 +2,7 @@
 namespace Model;
 use App;
 use Exception;
+use Repository\Like_repository;
 use stdClass;
 use System\Emerald\Emerald_model;
 
@@ -213,24 +214,6 @@ class Post_model extends Emerald_Model
     }
 
     /**
-     * Get post by id
-     *
-     * @param int $post_id
-     * @return Post_model
-     *
-     * @author Farukh Baratov <seniorsngstaff@mail.ru>
-     */
-    public static function get_by_id(int $post_id): Post_model
-    {
-        return static::transform_one(
-            App::get_s()
-                ->from(self::CLASS_TABLE)
-                ->where(['id' => $post_id])
-                ->one()
-        );
-    }
-
-    /**
      * @param User_model $user
      *
      * @return bool
@@ -238,7 +221,7 @@ class Post_model extends Emerald_Model
      */
     public function increment_likes(User_model $user): bool
     {
-        // TODO: task 3, лайк поста
+        return (new Like_repository($this))->set_user($user)->like();
     }
 
 

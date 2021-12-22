@@ -4,6 +4,7 @@ namespace Model;
 
 use App;
 use Exception;
+use Repository\Like_repository;
 use stdClass;
 use System\Emerald\Emerald_model;
 
@@ -254,7 +255,7 @@ class Comment_model extends Emerald_Model {
      */
     public function increment_likes(User_model $user): bool
     {
-        // TODO: task 3, лайк комментария
+        return (new Like_repository($this))->set_user($user)->like();
     }
 
     /**
