@@ -234,7 +234,16 @@ class Comment_model extends Emerald_Model {
      */
     public static function get_all_by_assign_id(int $assign_id): array
     {
-        return static::transform_many(App::get_s()->from(self::CLASS_TABLE)->where(['assign_id' => $assign_id])->orderBy('time_created', 'ASC')->many());
+        return static::transform_many(
+            App::get_s()
+                ->from(self::CLASS_TABLE)
+                ->where([
+                    'assign_id' => $assign_id,
+                    'reply_id' => NULL
+                ])
+                ->orderBy('time_created', 'ASC')
+                ->many()
+        );
     }
 
     /**
@@ -248,9 +257,27 @@ class Comment_model extends Emerald_Model {
         // TODO: task 3, лайк комментария
     }
 
+    /**
+     * Get child comments
+     *
+     * @param int $reply_id
+     * @return Comment_model[]
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
     public static function get_all_by_replay_id(int $reply_id)
     {
-        // TODO task 2, дополнительно, вложенность комментариев
+        /*
+         * Можно было бы обойтись без куча запросов в бд, путем построения дерева
+         */
+        return static::transform_many(
+            App::get_s()
+                ->from(self::CLASS_TABLE)
+                ->where([
+                    'reply_id' => $reply_id
+                ])
+                ->many()
+        );
     }
 
     /**
@@ -283,6 +310,7 @@ class Comment_model extends Emerald_Model {
         $o->text = $data->get_text();
 
         $o->user = User_model::preparation($data->get_user(), 'main_page');
+        $o->comments = self::preparation_many(self::get_all_by_replay_id($data->get_id()));
 
         $o->likes = $data->get_likes();
 

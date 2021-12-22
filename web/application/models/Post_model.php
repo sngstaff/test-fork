@@ -147,12 +147,16 @@ class Post_model extends Emerald_Model
     // generated
 
     /**
-     * @return Comment_model[]
+     * Get comments
+     *
+     * @return array
+     * @throws Exception
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
      */
     public function get_comments():array
     {
-        return [];
-       // TODO: task 2, комментирование
+        return Comment_model::get_all_by_assign_id($this->get_id());
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use Model\Boosterpack_model;
+use Model\Comment_model;
 use Model\Login_model;
 use Model\Post_model;
 use Model\User_model;
@@ -87,13 +88,28 @@ class Main_page extends MY_Controller
         // TODO: task 1, аутентификация
     }
 
+    /**
+     * Store comment to db
+     *
+     * @return object|string|void
+     * @throws Exception
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
     public function comment()
     {
         $data = App::get_ci()->input->post();
         $data['user_id'] = User_model::get_user()->get_id();
 
-        \Model\Comment_model::create($data);
-        // TODO: task 2, комментирование
+        try {
+            $comment = Comment_model::create($data);
+        } catch (Exception $e) {
+            return $this->response_error('Whoops');
+        }
+
+        return $this->response_success([
+            'comment' => Comment_model::preparation($comment, 'default')
+        ]);
     }
 
     public function like_comment(int $comment_id)
