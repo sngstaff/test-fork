@@ -3,10 +3,8 @@ namespace Model;
 
 use App;
 use Exception;
-use http\Client\Curl\User;
 use System\Emerald\Emerald_model;
 use stdClass;
-use ShadowIgniterException;
 
 /**
  * Created by PhpStorm.
