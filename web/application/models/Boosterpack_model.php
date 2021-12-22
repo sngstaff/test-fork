@@ -3,6 +3,7 @@ namespace Model;
 
 use App;
 use Exception;
+use http\Client\Curl\User;
 use System\Emerald\Emerald_model;
 use stdClass;
 use ShadowIgniterException;
@@ -134,6 +135,10 @@ class Boosterpack_model extends Emerald_model
      */
     public function get_boosterpack_info(): array
     {
+        return [];
+        /*
+         * Связь бустерпаков нужно было заинсертить в бд?
+         */
         // TODO
     }
 
@@ -170,10 +175,46 @@ class Boosterpack_model extends Emerald_model
 
     /**
      * @return int
+     * @throws Exception
      */
     public function open(): int
     {
-        // TODO: task 5, покупка и открытие бустерпака
+        $user = User_model::get_user();
+        if ($user->get_wallet_balance() < $this->get_price())
+        {
+            throw new Exception('Up balance');
+        }
+
+        # может быть я не так понял.
+        $items = $this->get_contains($this->_get_max_item_cost());
+        $item = Item_model::transform_one((array)$items[array_rand($items)]);
+
+        // calculating..
+        $transaction = App::get_s()->start_trans();
+        try {
+            $this->recalculate_bank($item->get_price());
+            $user->remove_money($this->get_price());
+            $user->set_likes_balance($user->get_likes_balance() + $item->get_price());
+
+            $transaction->commit();
+        } catch (Exception $e) {
+            // need log
+            $transaction->rollback();
+        }
+
+        return $item->get_price();
+    }
+
+    /**
+     * Recalculate bank
+     *
+     * @param int $amount
+     *
+     * @return void
+     */
+    protected function recalculate_bank(int $amount)
+    {
+        $this->set_bank($this->get_bank() + $this->get_price() - $this->get_us() - $amount);
     }
 
     /**
@@ -183,7 +224,11 @@ class Boosterpack_model extends Emerald_model
      */
     public function get_contains(int $max_available_likes): array
     {
-        // TODO: task 5, покупка и открытие бустерпака
+        # тут можно было бы сразу получить 1 рандомную запись с бд
+        return App::get_s()
+            ->from('items')
+            ->between('price', 1, $max_available_likes)
+            ->many();
     }
 
 
@@ -229,6 +274,25 @@ class Boosterpack_model extends Emerald_model
      */
     private static function _preparation_contains(Boosterpack_model $data): stdClass
     {
-        // TODO: task 5, покупка и открытие бустерпака
+        $o = new stdClass();
+
+        $o->id = $data->get_id();
+        $o->price = $data->get_price();
+
+        $o->contains = Item_model::preparation_many($data->get_contains($data->_get_max_item_cost()));
+
+        return $o;
+    }
+
+    /**
+     * Get maximum item cost
+     *
+     * @return float
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
+    private function _get_max_item_cost(): float
+    {
+        return $this->get_bank() + ($this->get_price() - $this->get_us());
     }
 }

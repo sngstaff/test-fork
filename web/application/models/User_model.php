@@ -307,7 +307,11 @@ class User_model extends Emerald_model
      */
     public function remove_money(float $sum): bool
     {
-        // TODO: task 5, списание денег
+        try {
+            $this->set_wallet_balance($this->get_wallet_balance() - $sum);
+        } catch (Exception $e) {
+            throw new \ShadowIgniterException('Error sql');
+        }
 
         return TRUE;
     }

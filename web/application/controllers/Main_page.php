@@ -196,6 +196,13 @@ class Main_page extends MY_Controller
         return $this->response_success(['post' => $post]);
     }
 
+    /**
+     * Buy booster pack
+     *
+     * @return object|string|void
+     *
+     * @author Farukh Baratov <seniorsngstaff@mail.ru>
+     */
     public function buy_boosterpack()
     {
         // Check user is authorize
@@ -203,7 +210,17 @@ class Main_page extends MY_Controller
             return $this->response_error(System\Libraries\Core::RESPONSE_GENERIC_NEED_AUTH);
         }
 
-        // TODO: task 5, покупка и открытие бустерпака
+        $boosterpack = new Boosterpack_model((int)App::get_ci()->input->post('id'));
+
+        try {
+            $likes = $boosterpack->open();
+        } catch (Exception $e) {
+            return $this->response_error($e->getMessage());
+        }
+
+        return $this->response_success([
+            'amount' => $likes
+        ]);
     }
 
 
@@ -216,8 +233,6 @@ class Main_page extends MY_Controller
         if (!User_model::is_logged()) {
             return $this->response_error(System\Libraries\Core::RESPONSE_GENERIC_NEED_AUTH);
         }
-
-
         //TODO получить содержимое бустерпака
     }
 }

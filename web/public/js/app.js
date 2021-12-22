@@ -137,6 +137,11 @@ var app = new Vue({
             axios.post('/main_page/buy_boosterpack', pack)
                 .then(function (response) {
                     self.amount = response.data.amount
+
+                    if (response.data.status == 'error') {
+                        return alert(response.data.error_message);
+                    }
+
                     if (self.amount !== 0) {
                         setTimeout(function () {
                             $('#amountModal').modal('show');
