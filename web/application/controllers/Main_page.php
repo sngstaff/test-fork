@@ -159,12 +159,27 @@ class Main_page extends MY_Controller
         ]);
     }
 
+    /**
+     * Add money
+     *
+     * @return object|string|void
+     */
     public function add_money()
     {
-        // TODO: task 4, пополнение баланса
-
         $sum = (float)App::get_ci()->input->post('sum');
 
+        $transaction = App::get_s()->start_trans();
+
+        try {
+            User_model::get_user()->add_money($sum);
+
+            $transaction->commit();
+        } catch (Exception $e) {
+            $transaction->rollback();
+            return $this->response_error('Whoops');
+        }
+
+        return $this->response_success();
     }
 
     /**
